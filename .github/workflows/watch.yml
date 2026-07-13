@@ -1,0 +1,40 @@
+# 사회부 속보 감시기 — 5분 간격 클라우드 실행
+# 맥북이 꺼져 있어도 텔레그램 알림이 나간다.
+# 자격증명은 저장소 Settings → Secrets and variables → Actions 에 등록.
+name: sabu-watch
+
+on:
+  schedule:
+    - cron: "*/5 * * * *" # 5분 간격 (깃허브 사정에 따라 수 분 지연될 수 있음)
+  workflow_dispatch: # 수동 실행 버튼
+
+permissions:
+  contents: write # state.json 커밋용
+
+concurrency:
+  group: sabu-watch # 이전 실행이 밀려서 겹치면 하나만 실행
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 감시 1회 실행
+        env:
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python3 watch.py --once
+
+      - name: 상태 저장 (중복 알림 방지 기록)
+        run: |
+          git config user.name "sabu-watch-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add state.json
+          git diff --cached --quiet && exit 0
+          git commit -m "상태 갱신 [skip ci]"
+          git pull --rebase && git push
