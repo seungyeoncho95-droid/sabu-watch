@@ -4,22 +4,33 @@
 사회부 관련 **[단독] / [속보] / 주요 사건사고** 기사가 뜨면
 macOS 배너 알림(사운드 포함)을 즉시 보낸다.
 
-## 사용법
+## 실행 방식 — GitHub Actions 클라우드 (기본)
+
+맥북이 꺼져 있어도 **GitHub Actions가 5분 간격으로 감시기를 실행**해 텔레그램으로
+알림을 보낸다 (저장소: `seungyeoncho95-droid/sabu-watch`, 공개).
+자격증명은 저장소 Actions Secrets에 등록돼 있고, 중복 방지 기록(`state.json`)은
+실행마다 저장소에 커밋해서 이어간다.
+
+```bash
+gh workflow disable sabu-watch   # 감시 끄기 (당번 아닌 날 등)
+gh workflow enable sabu-watch    # 감시 켜기
+gh run list --limit 5            # 최근 실행 확인
+```
+
+주의: 깃허브 스케줄 특성상 알림이 5~15분가량 지연될 수 있다.
+공개 저장소라 코드·키워드는 노출되지만 자격증명(Secrets)은 비공개.
+
+## 로컬 실행 (보조 — 클라우드와 동시 실행 시 중복 알림 발생)
 
 ```bash
 cd ~/Desktop/sabu-watch
-python3 watch.py                 # 감시 시작 (Ctrl+C로 종료)
+python3 watch.py                 # 감시 시작 (Ctrl+C로 종료, 3분 간격이라 더 빠름)
 python3 watch.py --once          # 1회만 실행 (테스트)
 python3 watch.py --interval 120  # 폴링 간격 변경(초)
 ```
 
-백그라운드 실행/종료:
-
-```bash
-nohup python3 watch.py >> watch.out 2>&1 &   # 시작
-pkill -f "watch.py"                          # 종료
-tail -f watch.out                            # 실시간 로그 보기
-```
+로컬로 돌릴 땐 먼저 `gh workflow disable sabu-watch`로 클라우드를 끌 것.
+로컬과 클라우드의 state.json이 따로 놀아서 같은 기사가 두 번 알림된다.
 
 ## 작동 방식
 
