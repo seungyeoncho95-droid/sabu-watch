@@ -4,8 +4,11 @@
 name: sabu-watch
 
 on:
-  schedule:
-    - cron: "*/5 * * * *" # 5분 간격 (깃허브 사정에 따라 수 분 지연될 수 있음)
+  # 당번 아닌 기간이라 스케줄 중지(2026-07-19). 당번일에 아래 두 줄 주석 해제.
+  # gh workflow disable로 껐는데도 스케줄 실행이 이틀 더 계속되는 깃허브
+  # 오작동이 있어서, 끌 때는 cron 자체를 제거하는 방식으로 한다.
+  # schedule:
+  #   - cron: "*/5 * * * *" # 5분 간격 (깃허브 사정에 따라 수 분~수 시간 지연될 수 있음)
   workflow_dispatch: # 수동 실행 버튼
 
 permissions:
