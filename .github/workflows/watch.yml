@@ -6,8 +6,8 @@ name: sabu-watch
 on:
   # 켜고 끌 때 주의: gh workflow disable로는 스케줄이 이틀 더 도는 깃허브
   # 오작동이 있어서, 끌 때는 아래 schedule 두 줄을 주석 처리해서 푸시한다.
-  schedule:
-    - cron: "*/5 * * * *" # 5분 간격 (깃허브 사정에 따라 수 분~수 시간 지연될 수 있음)
+  # schedule:
+  #   - cron: "*/5 * * * *" # 5분 간격 (깃허브 사정에 따라 수 분~수 시간 지연될 수 있음)
   workflow_dispatch: # 수동 실행 버튼
 
 permissions:
